@@ -43,7 +43,7 @@ router.post("/otp", async (req, res, next) => {
 });
 
 router.post("/create", async (req, res, next) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, verified } = req.body;
   const existingEmail = await Schema.findOne({ email: email });
 
   if (existingEmail) {
@@ -56,7 +56,7 @@ router.post("/create", async (req, res, next) => {
       name,
       email,
       password: hashedPassword,
-      verified: false,
+      verified: verified,
     });
     await newUser.save();
     return res.status(200).json("Successfull");
