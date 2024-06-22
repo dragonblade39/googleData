@@ -27,10 +27,17 @@ router.post("/otp", async (req, res, next) => {
   try {
     const { otp, email } = req.body;
     const mailOptions = {
-      from: process.env.AUTH_EMAIL,
+      from: `"Chethan N V" <${process.env.AUTH_EMAIL}>`,
       to: email,
-      subject: "Verify Your Email",
-      html: `<p>Enter <b>${otp}</b> in the app to verify your email address and complete the Signup</p><p>This code <b>expires in 1 hour</b>.</p>`,
+      subject: "Verification Code for Account Activation",
+      html: `
+        <p>Dear User,</p>
+        <p>Please use the following verification code to activate your account:</p>
+        <p><b>${otp}</b></p>
+        <br />
+        <p>Best regards,</p>
+        <p>Chethan N V</p>
+      `,
     };
     await transporter.sendMail(mailOptions);
     return res.status(200).json("Successfull");
@@ -86,18 +93,20 @@ router.post("/login", async (req, res, next) => {
         password,
         existingUser.password
       );
-
       if (passwordMatch) {
-        // Passwords match, user is authenticated
-        return res
-          .status(200)
-          .json({ message: "Login successful", user: existingUser });
+        if (existingUser.verified) {
+          return res
+            .status(200)
+            .json({ message: "Login successful", user: existingUser });
+        } else {
+          return res
+            .status(202)
+            .json({ message: "Email not verified. Please verify your email." });
+        }
       } else {
-        // Passwords do not match
         return res.status(401).json({ message: "Incorrect email or password" });
       }
     } else {
-      // User with the provided email does not exist
       return res.status(404).json({ message: "Incorrect email or password" });
     }
   } catch (error) {
