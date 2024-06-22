@@ -11,7 +11,7 @@ let transporter = nodemailer.createTransport({
     user: "chethannv23.csedvit@gmail.com",
     pass: "qosp hecn uhio rpns",
   },
-  debug: true, // Enable debugging output
+  debug: true,
 });
 
 transporter.verify((error, success) => {
@@ -29,11 +29,93 @@ router.post("/otp", async (req, res, next) => {
     const mailOptions = {
       from: `"Chethan N V" <${process.env.AUTH_EMAIL}>`,
       to: email,
-      subject: "Verification Code for Account Activation",
+      subject: "Verification Code for Account Activation!!!",
       html: `
         <p>Dear User,</p>
         <p>Please use the following verification code to activate your account:</p>
         <p><b>${otp}</b></p>
+        <br />
+        <p>Best regards,</p>
+        <p>Chethan N V</p>
+      `,
+    };
+    await transporter.sendMail(mailOptions);
+    return res.status(200).json("Successfull");
+  } catch (error) {
+    res.json({
+      status: "FAILED",
+      message: error.message,
+    });
+  }
+});
+
+router.post("/welcome", async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const existingEmail = await Schema.findOne({ email });
+    const name = existingEmail.name;
+    const mailOptions = {
+      from: `"Chethan N V" <${process.env.AUTH_EMAIL}>`,
+      to: email,
+      subject: "Welcome to OurPlatform!!!",
+      html: `
+        <p>Hello ${name},</p>
+        <p>Welcome to OurPlatform! We're excited to have you on board!!!</p>
+        <br />
+        <p>Best regards,</p>
+        <p>Chethan N V</p>
+      `,
+    };
+    await transporter.sendMail(mailOptions);
+    return res.status(200).json("Successfull");
+  } catch (error) {
+    res.json({
+      status: "FAILED",
+      message: error.message,
+    });
+  }
+});
+
+router.post("/forgotpasswordemail", async (req, res, next) => {
+  try {
+    const { email, otp } = req.body;
+    const existingEmail = await Schema.findOne({ email });
+    const name = existingEmail.name;
+    const mailOptions = {
+      from: `"Chethan N V" <${process.env.AUTH_EMAIL}>`,
+      to: email,
+      subject: "Password Change Requested!!!",
+      html: `
+        <p>Hello ${name},</p>
+        <p>Please use the following verification code to change your password:</p>
+        <p><b>${otp}</b></p>
+        <br />
+        <p>Best regards,</p>
+        <p>Chethan N V</p>
+      `,
+    };
+    await transporter.sendMail(mailOptions);
+    return res.status(200).json("Successfull");
+  } catch (error) {
+    res.json({
+      status: "FAILED",
+      message: error.message,
+    });
+  }
+});
+
+router.post("/changedpassword", async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const existingEmail = await Schema.findOne({ email });
+    const name = existingEmail.name;
+    const mailOptions = {
+      from: `"Chethan N V" <${process.env.AUTH_EMAIL}>`,
+      to: email,
+      subject: "Password Changed!!!",
+      html: `
+        <p>Hello ${name},</p>
+        <p>Password has been updated successfully!!!</p>
         <br />
         <p>Best regards,</p>
         <p>Chethan N V</p>
