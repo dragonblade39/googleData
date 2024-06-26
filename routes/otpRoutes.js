@@ -93,6 +93,7 @@ router1.post("/otpcheck", async (req, res, next) => {
     if (currentTime > otpRecord.expiresAt) {
       return res.status(400).json({ error: "OTP has expired." });
     }
+    await otpSchema.deleteMany({ email });
     return res.status(200).json({ message: "OTP is valid." });
   } catch (error) {
     console.error(error);

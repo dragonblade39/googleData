@@ -51,7 +51,6 @@ router.post("/create", async (req, res, next) => {
         }
       );
     }
-
     return res.status(200).json("Successfull");
   } catch (error) {
     console.error("Error:", error);
