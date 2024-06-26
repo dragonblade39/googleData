@@ -42,13 +42,15 @@ router.post("/create", async (req, res, next) => {
     });
     await newUser.save();
     //await axios.post("http://localhost:5500/Otp-Data/otpstore", {
-    await axios.post(
-      "https://googledata-backend.onrender.com/Otp-Data/otpstore",
-      {
-        email: email,
-        name: name,
-      }
-    );
+    if (newUser.verified === false) {
+      await axios.post(
+        "https://googledata-backend.onrender.com/Otp-Data/otpstore",
+        {
+          email: email,
+          name: name,
+        }
+      );
+    }
 
     return res.status(200).json("Successfull");
   } catch (error) {
@@ -240,13 +242,11 @@ router.post("/verifyForPasswordUpdate", async (req, res) => {
               .status(200)
               .json({ message: "User verified successfully" });
           } else {
-            // Handle specific cases or default to an error message
             return res.status(400).json({
               message: response.data.message || "OTP verification failed",
             });
           }
         } catch (error) {
-          // Log detailed error information
           console.error(
             "Error during OTP verification:",
             error.response ? error.response.data : error.message
