@@ -88,7 +88,7 @@ router1.post("/otpcheck", async (req, res, next) => {
     if (!isMatch) {
       return res.status(400).json({ error: "Invalid email or OTP." });
     }
-
+    
     const currentTime = new Date();
     if (currentTime > otpRecord.expiresAt) {
       return res.status(400).json({ error: "OTP has expired." });
