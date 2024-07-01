@@ -35,16 +35,14 @@ router.post("/upload-files", upload.single("file"), async (req, res) => {
 
   try {
     const existingFile = await PdfSchema.findOne({
-      pdf: fileName,
+      title: title,
       email: email,
     });
     if (existingFile) {
-      return res
-        .status(400)
-        .json({
-          status: "error",
-          message: "File already exists for this email.",
-        });
+      return res.status(400).json({
+        status: "error",
+        message: "File already exists for this email.",
+      });
     }
     await PdfSchema.create({ title: title, pdf: fileName, email: email });
     res.send({ status: "ok" });
