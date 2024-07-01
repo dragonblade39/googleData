@@ -31,14 +31,26 @@ const upload = multer({ dest: "uploads/" });
 router.post("/upload-files", upload.single("file"), async (req, res) => {
   console.log(req.file);
   const { title, email } = req.body;
-  const fileName = req.file.filename; // Use the filename from the uploaded file
+  const fileName = req.file.filename;
 
   try {
+    const existingFile = await PdfSchema.findOne({
+      pdf: fileName,
+      email: email,
+    });
+    if (existingFile) {
+      return res
+        .status(400)
+        .json({
+          status: "error",
+          message: "File already exists for this email.",
+        });
+    }
     await PdfSchema.create({ title: title, pdf: fileName, email: email });
     res.send({ status: "ok" });
   } catch (error) {
     console.error("Error uploading file:", error);
-    res.json({ status: error.message });
+    res.status(500).json({ status: "error", message: error.message });
   }
 });
 
